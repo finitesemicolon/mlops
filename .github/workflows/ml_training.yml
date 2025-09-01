@@ -1,0 +1,36 @@
+# Name of the Github Actions Wprkflow
+name: ML model Training Pipeline
+
+# Define the triggers for this workflow
+on:
+  push:      # Run the event on push
+    branches :  [ "main" ]   #Only when code is pushed to main branch
+
+# Define the def of job to run
+jobs:
+  build:                      #Job run
+  runs-on: ubuntu-latest      # The VM environment to run this job
+  steps:
+      #Step1 - Check out the repository code so its available in the VM
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      #Step 2:Set up Python Environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"    # Specify the Python Version
+      #Step3 - Install dependencies from requirement.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirement.txt # Install project dependencies
+      #Step 4: Run the ML training Script
+      - name: Run the training script
+        run : python train.py
+      #Step5: Upload the trained model as an artifact
+      - name: Upload model artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-model    # Artifact name in the Github Actions UI
+          path: model.pkl
+  
